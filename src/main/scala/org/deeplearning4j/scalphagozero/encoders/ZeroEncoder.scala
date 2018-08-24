@@ -14,12 +14,12 @@ import org.nd4j.linalg.factory.Nd4j
   *
   * @author Max Pumperla
   */
-class ZeroEncoder(override val boardHeight: Int, override val boardWidth: Int)
-    extends Encoder(boardHeight, boardWidth, 11) {
+final class ZeroEncoder(boardHeight: Int, boardWidth: Int) extends Encoder(boardHeight, boardWidth, 11) {
 
   override val name: String = "AlphaGoZero"
 
-  val numMoves: Int = boardWidth * boardHeight + 1
+  val boardSize = boardWidth * boardHeight
+  val numMoves: Int = boardSize + 1
 
   /**
     * Encode the current game state as board tensor
@@ -61,12 +61,12 @@ class ZeroEncoder(override val boardHeight: Int, override val boardWidth: Int)
   override def encodeMove(move: Move): Int =
     move match {
       case Move.Play(point) => boardHeight * (point.row - 1) + (point.col - 1)
-      case Move.Pass        => boardHeight * boardWidth
+      case Move.Pass        => boardSize
       case _                => throw new IllegalArgumentException("Cannot encode resign move")
     }
 
   override def decodeMoveIndex(index: Int): Move =
-    if (index == boardWidth * boardHeight) {
+    if (index == boardSize) {
       Move.Pass
     } else {
       val row = index / boardHeight
