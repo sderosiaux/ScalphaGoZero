@@ -45,8 +45,8 @@ class ZeroAgent(val model: ComputationGraph, val encoder: ZeroEncoder, val round
       }
     }
     val rootStateTensor = encoder.encode(gameState)
-    val visitCounts: INDArray = Nd4j.create(1, encoder.numMoves())
-    for (index <- 0 until encoder.numMoves()) {
+    val visitCounts: INDArray = Nd4j.create(1, encoder.numMoves)
+    for (index <- 0 until encoder.numMoves) {
       val move: Move = encoder.decodeMoveIndex(index)
       visitCounts.put(1, index, Nd4j.scalar(root.visitCount(move).doubleValue()))
     }
