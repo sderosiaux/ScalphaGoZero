@@ -102,7 +102,7 @@ object GameResult {
       val nextPoint = Point(startingPoint.row + row, startingPoint.col + col)
       if (board.isOnGrid(nextPoint)) {
         val neighbor: Option[PlayerColor] = board.getColor(nextPoint)
-        if (neighbor == here) {
+        if (neighbor.equals(here)) {
           val (points, borders) = collectRegion(nextPoint, board, visited)
           allPoints ++= points
           allBorders ++= borders
