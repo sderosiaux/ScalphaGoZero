@@ -95,7 +95,7 @@ object GameResult {
       return (List.empty, Set.empty)
 
     var allPoints = List(startingPoint)
-    var allBorders: Set[Option[PlayerColor]] = Set()
+    var allBorders: Set[Option[PlayerColor]] = Set.empty
     visitedMap += startingPoint.toCoords
     val here: Option[PlayerColor] = board.getColor(startingPoint)
     val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
