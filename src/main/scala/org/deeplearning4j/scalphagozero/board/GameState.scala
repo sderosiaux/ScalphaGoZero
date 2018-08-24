@@ -104,12 +104,13 @@ class GameState(
     if (this.isOver) ListBuffer().toList
     else {
       val moves = ListBuffer[Move](Move.Pass, Move.Resign)
-      for (row <- 1 to board.row) {
-        for (col <- 1 to board.col) {
-          val move = Move.Play(Point(row, col))
-          if (this.isValidMove(move))
-            moves += move
-        }
+      for {
+        row <- 1 to board.row
+        col <- 1 to board.col
+      } {
+        val move = Move.Play(Point(row, col))
+        if (this.isValidMove(move))
+          moves += move
       }
       moves.toList
     }
