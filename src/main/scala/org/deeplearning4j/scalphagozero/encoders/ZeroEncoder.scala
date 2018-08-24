@@ -29,7 +29,7 @@ class ZeroEncoder(override val boardHeight: Int, override val boardWidth: Int)
 
     val tensor = Nd4j.zeros(this.shape(): _*)
 
-    val nextPlayer: Player = gameState.nextPlayer
+    val nextPlayer: Player[PlayerColor] = gameState.nextPlayer
     nextPlayer.color match {
       case PlayerColor.White => tensor.putSlice(8, Nd4j.ones(boardHeight, boardWidth));
       case PlayerColor.Black => tensor.putSlice(9, Nd4j.ones(boardHeight, boardWidth));

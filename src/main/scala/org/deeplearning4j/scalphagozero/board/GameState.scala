@@ -14,12 +14,12 @@ package org.deeplearning4j.scalphagozero.board
   */
 class GameState(
     val board: GoBoard,
-    val nextPlayer: Player,
+    val nextPlayer: Player[PlayerColor],
     val previousState: Option[GameState],
     val lastMove: Option[Move]
 ) {
 
-  private val allPreviousStates: Set[(Player, Long)] =
+  private val allPreviousStates: Set[(Player[PlayerColor], Long)] =
     previousState match {
       case None        => Set.empty
       case Some(state) => Set(nextPlayer -> state.board.zobristHash)
@@ -61,13 +61,13 @@ class GameState(
     new GameState(nextBoard, nextPlayer.other, Some(this), Some(move))
   }
 
-  def isMoveSelfCapture(player: Player, move: Move): Boolean =
+  def isMoveSelfCapture(player: Player[PlayerColor], move: Move): Boolean =
     move match {
       case Move.Play(point)        => this.board.isSelfCapture(player, point)
       case Move.Pass | Move.Resign => false
     }
 
-  def doesMoveViolateKo(player: Player, move: Move): Boolean =
+  def doesMoveViolateKo(player: Player[PlayerColor], move: Move): Boolean =
     move match {
       case Move.Play(point) if this.board.willCapture(player, point) =>
         val nextBoard = this.board.clone()
@@ -95,7 +95,7 @@ object GameState {
 
   def newGame(boardHeight: Int, boardWidth: Int): GameState = {
     val board = GoBoard(boardHeight, boardWidth)
-    new GameState(board, Player(PlayerColor.Black), None, None)
+    new GameState(board, PlayerBlack, None, None)
   }
 
 }

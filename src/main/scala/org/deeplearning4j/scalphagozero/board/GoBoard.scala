@@ -29,7 +29,7 @@ class GoBoard(val row: Int, val col: Int) {
 
   def corners(point: Point): List[Point] = cornerMap.getOrElse((point.row, point.col), List.empty)
 
-  def placeStone(player: Player, point: Point): Unit = {
+  def placeStone(player: Player[_], point: Point): Unit = {
     assert(isOnGrid(point))
 
     if (grid.get(point.toCoords).isDefined) {
@@ -84,7 +84,7 @@ class GoBoard(val row: Int, val col: Int) {
     for (point <- newString.stones)
       grid += (point -> newString)
 
-  def isSelfCapture(player: Player, point: Point): Boolean = {
+  def isSelfCapture(player: Player[_], point: Point): Boolean = {
     val friendlyStrings: ListBuffer[GoString] = ListBuffer.empty[GoString]
     for (neighbor <- neighborMap((point.row, point.col))) {
       val neighborString = grid.get(neighbor.toCoords)
@@ -102,7 +102,7 @@ class GoBoard(val row: Int, val col: Int) {
     false
   }
 
-  def willCapture(player: Player, point: Point): Boolean = {
+  def willCapture(player: Player[_], point: Point): Boolean = {
     for (neighbor <- neighborMap((point.row, point.col))
          if grid.get(neighbor.toCoords).isDefined && grid(neighbor.toCoords).color != player.color) {
       val neighborString = grid(neighbor.toCoords)
