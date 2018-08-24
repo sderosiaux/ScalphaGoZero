@@ -95,7 +95,7 @@ object GameState {
 
   def newGame(boardHeight: Int, boardWidth: Int): GameState = {
     val board = GoBoard(boardHeight, boardWidth)
-    new GameState(board, PlayerBlack, None, None)
+    new GameState(board, BlackPlayer, None, None)
   }
 
 }

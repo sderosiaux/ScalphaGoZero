@@ -8,20 +8,20 @@ class BoardTest extends FunSpec {
     val board = GoBoard(19, 19)
 
     it("should place and confirm a black stone") {
-      board.placeStone(PlayerBlack, Point(2, 2))
-      board.placeStone(PlayerWhite, Point(1, 2))
+      board.placeStone(BlackPlayer, Point(2, 2))
+      board.placeStone(WhitePlayer, Point(1, 2))
       assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
     }
     it("if black's liberties go down to two, the stone should still be there") {
-      board.placeStone(PlayerWhite, Point(2, 1))
+      board.placeStone(WhitePlayer, Point(2, 1))
       assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
     }
     it("if black's liberties go down to one, the stone should still be there") {
-      board.placeStone(PlayerWhite, Point(2, 3))
+      board.placeStone(WhitePlayer, Point(2, 3))
       assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
     }
     it("finally, if all liberties are taken, the stone should be gone") {
-      board.placeStone(PlayerWhite, Point(3, 2))
+      board.placeStone(WhitePlayer, Point(3, 2))
       assert(board.getColor(Point(2, 2)).isEmpty)
     }
   }
@@ -30,24 +30,24 @@ class BoardTest extends FunSpec {
     val board = GoBoard(19, 19)
 
     it("should place and confirm two black stones") {
-      board.placeStone(PlayerBlack, Point(2, 2))
-      board.placeStone(PlayerBlack, Point(2, 3))
-      board.placeStone(PlayerWhite, Point(1, 2))
-      board.placeStone(PlayerWhite, Point(1, 3))
+      board.placeStone(BlackPlayer, Point(2, 2))
+      board.placeStone(BlackPlayer, Point(2, 3))
+      board.placeStone(WhitePlayer, Point(1, 2))
+      board.placeStone(WhitePlayer, Point(1, 3))
 
       assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
       assert(board.getColor(Point(2, 3)).contains(PlayerColor.Black))
     }
     it("if black's liberties go down to two, the stone should still be there") {
-      board.placeStone(PlayerWhite, Point(3, 2))
-      board.placeStone(PlayerWhite, Point(3, 3))
+      board.placeStone(WhitePlayer, Point(3, 2))
+      board.placeStone(WhitePlayer, Point(3, 3))
       assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
       assert(board.getColor(Point(2, 3)).contains(PlayerColor.Black))
 
     }
     it("finally, if all liberties are taken, the stone should be gone") {
-      board.placeStone(PlayerWhite, Point(2, 1))
-      board.placeStone(PlayerWhite, Point(2, 4))
+      board.placeStone(WhitePlayer, Point(2, 1))
+      board.placeStone(WhitePlayer, Point(2, 4))
       assert(board.getColor(Point(2, 2)).isEmpty)
     }
   }
@@ -55,11 +55,11 @@ class BoardTest extends FunSpec {
   describe("If you capture a stone, it's not suicide") {
     val board = GoBoard(19, 19)
     it("should regain liberties by capturing") {
-      board.placeStone(PlayerBlack, Point(1, 1))
-      board.placeStone(PlayerBlack, Point(2, 2))
-      board.placeStone(PlayerBlack, Point(1, 3))
-      board.placeStone(PlayerWhite, Point(2, 1))
-      board.placeStone(PlayerWhite, Point(1, 2))
+      board.placeStone(BlackPlayer, Point(1, 1))
+      board.placeStone(BlackPlayer, Point(2, 2))
+      board.placeStone(BlackPlayer, Point(1, 3))
+      board.placeStone(WhitePlayer, Point(2, 1))
+      board.placeStone(WhitePlayer, Point(1, 2))
       assert(board.getColor(Point(1, 1)).isEmpty)
       assert(board.getColor(Point(2, 1)).contains(PlayerColor.White))
       assert(board.getColor(Point(1, 2)).contains(PlayerColor.White))
@@ -69,12 +69,12 @@ class BoardTest extends FunSpec {
   describe("Test removing liberties:") {
     it("a stone with four liberties should end up with three if an opponent stone is added") {
       val board = new GoBoard(5, 5)
-      board.placeStone(PlayerBlack, Point(3, 3))
-      board.placeStone(PlayerWhite, Point(2, 2))
+      board.placeStone(BlackPlayer, Point(3, 3))
+      board.placeStone(WhitePlayer, Point(2, 2))
       val whiteString = board.getGoString(Point(2, 2)).get
       assert(whiteString.numLiberties == 4)
 
-      board.placeStone(PlayerBlack, Point(3, 2))
+      board.placeStone(BlackPlayer, Point(3, 2))
       //val newWhiteString = board.getGoString(Point(2, 2)).get
       //assert(whiteString.numLiberties == 3)
     }
@@ -85,10 +85,10 @@ class BoardTest extends FunSpec {
       // x x
       // x o
       val board = new GoBoard(5, 5)
-      board.placeStone(PlayerBlack, Point(1, 1))
-      board.placeStone(PlayerBlack, Point(1, 2))
-      board.placeStone(PlayerBlack, Point(2, 2))
-      board.placeStone(PlayerWhite, Point(2, 1))
+      board.placeStone(BlackPlayer, Point(1, 1))
+      board.placeStone(BlackPlayer, Point(1, 2))
+      board.placeStone(BlackPlayer, Point(2, 2))
+      board.placeStone(WhitePlayer, Point(2, 1))
 
       val blackString: GoString = board.getGoString(Point(1, 1)).get
 
@@ -104,27 +104,27 @@ class BoardTest extends FunSpec {
     // x.xo.
     it("black can't take it's own last liberty") {
       val board = new GoBoard(5, 5)
-      board.placeStone(PlayerBlack, Point(1, 1))
-      board.placeStone(PlayerBlack, Point(1, 3))
-      board.placeStone(PlayerWhite, Point(2, 1))
-      board.placeStone(PlayerWhite, Point(2, 2))
-      board.placeStone(PlayerWhite, Point(2, 3))
-      board.placeStone(PlayerWhite, Point(1, 4))
+      board.placeStone(BlackPlayer, Point(1, 1))
+      board.placeStone(BlackPlayer, Point(1, 3))
+      board.placeStone(WhitePlayer, Point(2, 1))
+      board.placeStone(WhitePlayer, Point(2, 2))
+      board.placeStone(WhitePlayer, Point(2, 3))
+      board.placeStone(WhitePlayer, Point(1, 4))
 
-      assert(board.isSelfCapture(PlayerBlack, Point(1, 2)))
+      assert(board.isSelfCapture(BlackPlayer, Point(1, 2)))
     }
 
     // o.o..
     // x.xo.
     it("but if we remove one white stone, the move becomes legal") {
       val board = new GoBoard(5, 5)
-      board.placeStone(PlayerBlack, Point(1, 1))
-      board.placeStone(PlayerBlack, Point(1, 3))
-      board.placeStone(PlayerWhite, Point(2, 1))
-      board.placeStone(PlayerWhite, Point(2, 3))
-      board.placeStone(PlayerWhite, Point(1, 4))
+      board.placeStone(BlackPlayer, Point(1, 1))
+      board.placeStone(BlackPlayer, Point(1, 3))
+      board.placeStone(WhitePlayer, Point(2, 1))
+      board.placeStone(WhitePlayer, Point(2, 3))
+      board.placeStone(WhitePlayer, Point(1, 4))
 
-      assert(!board.isSelfCapture(PlayerBlack, Point(1, 2)))
+      assert(!board.isSelfCapture(BlackPlayer, Point(1, 2)))
     }
 
     // xx...
@@ -132,15 +132,15 @@ class BoardTest extends FunSpec {
     // x.o..
     it("if we capture a stone in the process, it's not self-play") {
       val board = new GoBoard(5, 5)
-      board.placeStone(PlayerBlack, Point(3, 1))
-      board.placeStone(PlayerBlack, Point(3, 2))
-      board.placeStone(PlayerBlack, Point(2, 3))
-      board.placeStone(PlayerBlack, Point(1, 1))
-      board.placeStone(PlayerWhite, Point(2, 1))
-      board.placeStone(PlayerWhite, Point(2, 2))
-      board.placeStone(PlayerWhite, Point(1, 3))
+      board.placeStone(BlackPlayer, Point(3, 1))
+      board.placeStone(BlackPlayer, Point(3, 2))
+      board.placeStone(BlackPlayer, Point(2, 3))
+      board.placeStone(BlackPlayer, Point(1, 1))
+      board.placeStone(WhitePlayer, Point(2, 1))
+      board.placeStone(WhitePlayer, Point(2, 2))
+      board.placeStone(WhitePlayer, Point(1, 3))
 
-      assert(!board.isSelfCapture(PlayerBlack, Point(1, 2)))
+      assert(!board.isSelfCapture(BlackPlayer, Point(1, 2)))
     }
 
   }

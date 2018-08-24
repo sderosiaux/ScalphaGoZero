@@ -8,11 +8,11 @@ trait Player[+C <: PlayerColor] {
   def color: PlayerColor
   def other: Player[PlayerColor]
 }
-case object PlayerBlack extends Player[Black.type] {
+case object BlackPlayer extends Player[Black.type] {
   override def color: Black.type = Black
-  override def other: Player[White.type] = PlayerWhite
+  override def other: Player[White.type] = WhitePlayer
 }
-case object PlayerWhite extends Player[White.type] {
+case object WhitePlayer extends Player[White.type] {
   override def color: White.type = White
-  override def other: Player[Black.type] = PlayerBlack
+  override def other: Player[Black.type] = BlackPlayer
 }
