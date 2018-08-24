@@ -1,10 +1,10 @@
 package org.deeplearning4j.scalphagozero.scoring
 
-import org.deeplearning4j.scalphagozero.board.PlayerColor.{ Black, White }
-import org.deeplearning4j.scalphagozero.board.{ GameState, GoBoard, PlayerColor, Point }
+import org.deeplearning4j.scalphagozero.board.PlayerColor.{Black, White}
+import org.deeplearning4j.scalphagozero.board.{GameState, GoBoard, PlayerColor, Point}
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 /**
   * Compute the result of a game
@@ -93,8 +93,8 @@ object GameResult {
     if (visited.contains(startingPoint.toCoords))
       return (List.empty, Set.empty)
 
-    var allPoints = List(startingPoint)
-    var allBorders: Set[Option[PlayerColor]] = Set.empty
+    val allPoints = ListBuffer(startingPoint)
+    val allBorders: mutable.Set[Option[PlayerColor]] = mutable.Set.empty
     visited += startingPoint.toCoords
     val here: Option[PlayerColor] = board.getColor(startingPoint)
     val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
@@ -111,7 +111,7 @@ object GameResult {
         }
       }
     }
-    (allPoints, allBorders)
+    (allPoints.toList, allBorders.toSet)
   }
 
 }
