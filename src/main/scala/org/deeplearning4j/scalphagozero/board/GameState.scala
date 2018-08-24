@@ -87,11 +87,10 @@ class GameState(
       }
     }
 
-  // Jules: What happen is `lastMove` is `Move.Play` ??
   def isOver: Boolean =
     this.lastMove match {
-      case None              => false
-      case Some(Move.Resign) => true
+      case None | Some(Move.Play(_)) => false
+      case Some(Move.Resign)         => true
       case Some(Move.Pass) =>
         val secondLastMove = this.previousState.get.lastMove
         secondLastMove match {
