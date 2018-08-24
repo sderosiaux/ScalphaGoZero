@@ -17,7 +17,9 @@ import org.nd4j.linalg.factory.Nd4j
 class ZeroEncoder(override val boardHeight: Int, override val boardWidth: Int)
     extends Encoder(boardHeight, boardWidth, 11) {
 
-  override def name(): String = "AlphaGoZero"
+  override val name: String = "AlphaGoZero"
+
+  val numMoves: Int = boardWidth * boardHeight + 1
 
   /**
     * Encode the current game state as board tensor
@@ -71,8 +73,6 @@ class ZeroEncoder(override val boardHeight: Int, override val boardWidth: Int)
       val col = index % boardHeight
       Move.Play(Point(row + 1, col + 1))
     }
-
-  def numMoves(): Int = boardWidth * boardHeight + 1
 
 }
 
