@@ -53,11 +53,7 @@ class GameState(
       move match {
         case Move.Play(point) =>
           val nextBoard = this.board.clone()
-          try {
-            nextBoard.placeStone(nextPlayer, point)
-          } catch {
-            case _: Exception => println(" Illegal move attempted at: " + point.toCoords)
-          }
+          nextBoard.placeStone(nextPlayer, point)
           nextBoard
         case Move.Pass | Move.Resign => this.board
       }
@@ -98,7 +94,7 @@ class GameState(
 object GameState {
 
   def newGame(boardHeight: Int, boardWidth: Int): GameState = {
-    val board = new GoBoard(boardHeight, boardWidth)
+    val board = GoBoard(boardHeight, boardWidth)
     new GameState(board, Player(PlayerColor.Black), None, None)
   }
 
