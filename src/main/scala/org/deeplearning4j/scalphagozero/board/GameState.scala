@@ -22,7 +22,7 @@ class GameState(
   private val allPreviousStates: Set[(Player, Long)] =
     previousState match {
       case None        => Set.empty
-      case Some(state) => Set(nextPlayer -> state.board.zobristHash)
+      case Some(state) => state.allPreviousStates ++ Set(nextPlayer -> state.board.zobristHash)
     }
 
   val isOver: Boolean =
