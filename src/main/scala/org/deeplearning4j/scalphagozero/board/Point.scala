@@ -8,7 +8,7 @@ package org.deeplearning4j.scalphagozero.board
   *
   * @author Max Pumperla
   */
-case class Point(row: Int, col: Int) {
+final case class Point(row: Int, col: Int) {
 
   def neighbors: List[Point] = List(
     Point(this.row - 1, this.col),

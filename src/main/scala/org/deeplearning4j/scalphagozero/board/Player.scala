@@ -6,7 +6,7 @@ import org.deeplearning4j.scalphagozero.board.PlayerColor.{ Black, White }
   *
   * @param color player color, 1 = black, 2 = white
   */
-case class Player(color: PlayerColor) {
+final case class Player(color: PlayerColor) {
 
   def other: Player =
     color match {

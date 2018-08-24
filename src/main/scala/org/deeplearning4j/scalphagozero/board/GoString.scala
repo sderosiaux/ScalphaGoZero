@@ -9,7 +9,7 @@ package org.deeplearning4j.scalphagozero.board
   *
   * @author Max Pumperla
   */
-case class GoString(color: PlayerColor, stones: Set[(Int, Int)], liberties: Set[(Int, Int)]) {
+final case class GoString(color: PlayerColor, stones: Set[(Int, Int)], liberties: Set[(Int, Int)]) {
 
   def numLiberties: Int = liberties.size
 

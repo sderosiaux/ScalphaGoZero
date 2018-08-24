@@ -15,7 +15,7 @@ import scala.collection.mutable.ArrayBuffer
   *
   * @author Max Pumperla
   */
-case class GameResult(blackPoints: Int, whitePoints: Int, komi: Double) {
+final case class GameResult(blackPoints: Int, whitePoints: Int, komi: Double) {
 
   val winner: PlayerColor = if (blackPoints > whitePoints + komi) PlayerColor.Black else PlayerColor.White
 
