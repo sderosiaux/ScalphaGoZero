@@ -22,8 +22,9 @@ class ZeroTreeNode(
 ) {
 
   var totalVisitCount: Int = 1
-  val branches: mutable.Map[Move, Branch] = mutable.Map()
-  val children: mutable.Map[Move, ZeroTreeNode] = mutable.Map()
+
+  private val branches: mutable.Map[Move, Branch] = mutable.Map()
+  private val children: mutable.Map[Move, ZeroTreeNode] = mutable.Map()
 
   for {
     (move, prior) <- priors
