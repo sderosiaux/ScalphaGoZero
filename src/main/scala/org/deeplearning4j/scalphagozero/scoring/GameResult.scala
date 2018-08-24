@@ -1,10 +1,10 @@
 package org.deeplearning4j.scalphagozero.scoring
 
-import org.deeplearning4j.scalphagozero.board.PlayerColor.{Black, White}
-import org.deeplearning4j.scalphagozero.board.{GameState, GoBoard, PlayerColor, Point}
+import org.deeplearning4j.scalphagozero.board.PlayerColor.{ Black, White }
+import org.deeplearning4j.scalphagozero.board.{ GameState, GoBoard, PlayerColor, Point }
 
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.{ ArrayBuffer, ListBuffer }
 
 /**
   * Compute the result of a game
