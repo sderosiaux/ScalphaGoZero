@@ -61,10 +61,7 @@ class GoBoard(val row: Int, val col: Int) {
     // 4. If any opposite color strings now have zero liberties, remove them.
     for (otherColorString: GoString <- adjacentOppositeColor) {
       val replacement = otherColorString.withoutLiberty(point)
-      if (replacement.numLiberties > 0)
-        this.replaceString(otherColorString.withoutLiberty(point))
-      else
-        this.removeString(otherColorString)
+      if (replacement.numLiberties > 0) this.replaceString(replacement) else this.removeString(otherColorString)
     }
   }
 
