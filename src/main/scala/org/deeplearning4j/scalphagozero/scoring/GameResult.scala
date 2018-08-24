@@ -92,7 +92,7 @@ object GameResult {
   ): (List[Point], Set[Option[PlayerColor]]) = {
     var visitedMap = visited
     if (visited.contains(startingPoint.toCoords))
-      return (List(), Set())
+      return (List.empty, Set.empty)
 
     var allPoints = List(startingPoint)
     var allBorders: Set[Option[PlayerColor]] = Set()
