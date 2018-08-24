@@ -27,7 +27,7 @@ class ZeroEncoder(override val boardHeight: Int, override val boardWidth: Int)
     */
   override def encode(gameState: GameState): INDArray = {
 
-    val tensor = Nd4j.zeros(this.shape(): _*)
+    val tensor = Nd4j.zeros(this.shape: _*)
 
     val nextPlayer: Player = gameState.nextPlayer
     nextPlayer.color match {
