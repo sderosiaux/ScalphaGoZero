@@ -51,7 +51,7 @@ class GameState(
             case _: Exception => println(" Illegal move attempted at: " + point.toCoords)
           }
           nextBoard
-        case _ => this.board
+        case Move.Pass | Move.Resign => this.board
       }
 
     new GameState(nextBoard, nextPlayer.other, Some(this), Some(move))
@@ -59,8 +59,8 @@ class GameState(
 
   def isMoveSelfCapture(player: Player, move: Move): Boolean =
     move match {
-      case Move.Play(point) => this.board.isSelfCapture(player, point)
-      case _                => false
+      case Move.Play(point)        => this.board.isSelfCapture(player, point)
+      case Move.Pass | Move.Resign => false
     }
 
   def doesMoveViolateKo(player: Player, move: Move): Boolean =
@@ -94,8 +94,8 @@ class GameState(
       case Some(Move.Pass) =>
         val secondLastMove = this.previousState.get.lastMove
         secondLastMove match {
-          case Some(Move.Pass) => true
-          case _               => false
+          case Some(Move.Pass)                               => true
+          case None | Some(Move.Play(_)) | Some(Move.Resign) => false
         }
     }
 
@@ -119,7 +119,7 @@ class GameState(
     else {
       this.lastMove match {
         case Some(Move.Resign) => Some(this.nextPlayer.color)
-        case _ =>
+        case None | Some(Move.Play(_)) | Some(Move.Pass) =>
           val gameResult = GameResult.computeGameResult(this)
           Some(gameResult.winner)
       }
