@@ -30,10 +30,7 @@ object ZeroSimulator {
     println(">>> Starting a new game.")
     while (!game.isOver) {
       val nextMove = agents(game.nextPlayer.color).selectMove(game)
-      if (game.isValidMove(nextMove)) {
-        game = game.applyMove(nextMove)
-      } else
-        game = game.applyMove(Move.resign())
+      game = if (game.isValidMove(nextMove)) game.applyMove(nextMove) else game.applyMove(Move.Resign)
     }
     println(">>> Simulation terminated.")
 
