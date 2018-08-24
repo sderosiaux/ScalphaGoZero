@@ -1,7 +1,6 @@
 package org.deeplearning4j.scalphagozero.board
 
 import scala.collection.mutable
-import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -92,7 +91,7 @@ class GoBoard(val row: Int, val col: Int) {
       if (neighborString.isEmpty)
         return false
       else if (neighborString.get.color == player.color)
-        friendlyStrings.add(neighborString.get)
+        friendlyStrings += neighborString.get
       else if (neighborString.get.numLiberties == 1)
         return false
     }

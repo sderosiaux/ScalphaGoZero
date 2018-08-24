@@ -90,13 +90,12 @@ object GameResult {
       board: GoBoard,
       visited: ArrayBuffer[(Int, Int)] = ArrayBuffer()
   ): (List[Point], Set[Option[PlayerColor]]) = {
-    var visitedMap = visited
     if (visited.contains(startingPoint.toCoords))
       return (List.empty, Set.empty)
 
     var allPoints = List(startingPoint)
     var allBorders: Set[Option[PlayerColor]] = Set.empty
-    visitedMap += startingPoint.toCoords
+    visited += startingPoint.toCoords
     val here: Option[PlayerColor] = board.getColor(startingPoint)
     val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
     for ((row, col) <- deltas) {
@@ -104,7 +103,7 @@ object GameResult {
       if (board.isOnGrid(nextPoint)) {
         val neighbor: Option[PlayerColor] = board.getColor(nextPoint)
         if (neighbor == here) {
-          val (points, borders) = collectRegion(nextPoint, board, visitedMap)
+          val (points, borders) = collectRegion(nextPoint, board, visited)
           allPoints ++= points
           allBorders ++= borders
         } else {

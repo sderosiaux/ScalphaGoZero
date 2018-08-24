@@ -6,7 +6,7 @@ licenses += "Apache License, Version 2.0" -> url("http://www.apache.org/licenses
 
 scalafmtOnCompile := true
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.6"
 
 lazy val dl4j = ((version: String) => Seq(
   "org.nd4j" % "nd4j-native-platform" % version,

@@ -43,6 +43,7 @@ class ZeroTreeNode(
     val b = branches(move)
     val updatedBranch = Branch(b.prior, b.visitCount + 1, b.totalValue + value)
     branches.put(move, updatedBranch)
+    ()
   }
 
   def expectedValue(move: Move): Double = {
