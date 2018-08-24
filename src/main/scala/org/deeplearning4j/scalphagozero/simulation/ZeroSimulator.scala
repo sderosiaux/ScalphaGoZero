@@ -18,8 +18,8 @@ object ZeroSimulator {
     val boardHeight = encoder.boardHeight
     val boardWidth = encoder.boardWidth
 
-    val blackCollector = blackAgent.getCollector
-    val whiteCollector = whiteAgent.getCollector
+    val blackCollector = blackAgent.collector
+    val whiteCollector = whiteAgent.collector
 
     var game = GameState.newGame(boardHeight, boardWidth)
     val agents = Map(PlayerColor.black -> blackAgent, PlayerColor.white -> whiteAgent)
