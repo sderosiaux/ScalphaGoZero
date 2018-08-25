@@ -1,10 +1,10 @@
 package org.deeplearning4j.scalphagozero.scoring
 
 import org.deeplearning4j.scalphagozero.board.PlayerColor.{ Black, White }
-import org.deeplearning4j.scalphagozero.board.{ GameState, GoBoard, PlayerColor, Point }
+import org.deeplearning4j.scalphagozero.board.{ GoBoard, PlayerColor, Point }
 
 import scala.collection.mutable
-import scala.collection.mutable.{ ArrayBuffer, ListBuffer }
+import scala.collection.mutable.ListBuffer
 
 /**
   * Compute the result of a game
@@ -38,8 +38,8 @@ object GameResult {
     * @param gameState GameState instance
     * @return GameResult object
     */
-  def computeGameResult(gameState: GameState): GameResult = {
-    val territory = evaluateTerritory(gameState.board)
+  def computeGameResult(goBoard: GoBoard): GameResult = {
+    val territory = evaluateTerritory(goBoard)
     new GameResult(
       territory.numBlackTerritory + territory.numBlackStones,
       territory.numWhiteStones + territory.numWhiteStones,
@@ -55,63 +55,62 @@ object GameResult {
     * @return Territory object
     */
   def evaluateTerritory(goBoard: GoBoard): Territory = {
-    val statusMap = new mutable.HashMap[Point, String]()
-    for (row <- 1 to goBoard.row) {
-      for (col <- 1 to goBoard.col) {
-        val point = Point(row, col)
-        if (!statusMap.contains(point)) {
-          val stoneColor: Option[PlayerColor] = goBoard.getColor(point)
-          if (stoneColor.isDefined) {
-            val color = stoneColor.get
-            val status = if (color == PlayerColor.Black) "black" else "white"
-            statusMap.put(point, status)
-          } else {
+    val statusMap = new mutable.HashMap[Point, GamePointType]()
+    for (row <- 1 to goBoard.row; col <- 1 to goBoard.col) {
+      val point = Point(row, col)
+      if (!statusMap.contains(point)) {
+        goBoard.getColor(point) match {
+          case Some(color) =>
+            statusMap.put(point, if (color == PlayerColor.Black) BlackStone else WhiteStone)
+          case None =>
             val (group, neighbors) = collectRegion(point, goBoard)
-            var fillWith: String = ""
-            if (neighbors.size == 1) {
-              val neighborColor: Option[PlayerColor] = neighbors.head
-              val stoneString = if (neighborColor.get == PlayerColor.Black) "b" else "w"
-              fillWith = "territory_" + stoneString
-            } else {
-              fillWith = "dame"
-            }
+            val fillWith =
+              if (neighbors.size == 1) {
+                val neighborColor: Option[PlayerColor] = neighbors.head
+                if (neighborColor.get == PlayerColor.Black) BlackTerritory else WhiteTerritory
+              } else {
+                Dame
+              }
+
             for (position <- group) {
               statusMap.put(position, fillWith)
             }
-          }
         }
       }
     }
     new Territory(statusMap)
   }
 
+  private[this] final val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
+
+  // Is it possible to rewrite this in a tailrec function ?
+  // And/or use another mecanism to browse the board ?
+  // Why not use the `Point(...).neighbors` method ?
   private def collectRegion(
       startingPoint: Point,
       board: GoBoard,
-      visited: ArrayBuffer[(Int, Int)] = ArrayBuffer()
-  ): (List[Point], Set[Option[PlayerColor]]) = {
-    if (visited.contains(startingPoint.toCoords))
-      return (List.empty, Set.empty)
+      visited: Set[Point] = Set.empty
+  ): (List[Point], Set[Option[PlayerColor]]) =
+    if (visited.contains(startingPoint)) (List.empty, Set.empty)
+    else {
+      val here: Option[PlayerColor] = board.getColor(startingPoint)
 
-    val allPoints = ListBuffer(startingPoint)
-    val allBorders: mutable.Set[Option[PlayerColor]] = mutable.Set.empty
-    visited += startingPoint.toCoords
-    val here: Option[PlayerColor] = board.getColor(startingPoint)
-    val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
-    for ((row, col) <- deltas) {
-      val nextPoint = Point(startingPoint.row + row, startingPoint.col + col)
-      if (board.isOnGrid(nextPoint)) {
-        val neighbor: Option[PlayerColor] = board.getColor(nextPoint)
-        if (neighbor.equals(here)) {
-          val (points, borders) = collectRegion(nextPoint, board, visited)
-          allPoints ++= points
-          allBorders ++= borders
-        } else {
-          allBorders += neighbor
+      val (allPoints, allBorders) =
+        deltas.foldLeft((ListBuffer(startingPoint), mutable.Set.empty[Option[PlayerColor]])) {
+          case ((pointsAcc, bordersAcc), (row, col)) =>
+            val nextPoint = Point(startingPoint.row + row, startingPoint.col + col)
+            if (board.isOnGrid(nextPoint)) {
+              val neighbor: Option[PlayerColor] = board.getColor(nextPoint)
+              if (neighbor == here) {
+                val (points, borders) = collectRegion(nextPoint, board, visited + startingPoint)
+                (pointsAcc ++ points, bordersAcc ++ borders)
+              } else {
+                (pointsAcc, bordersAcc + neighbor)
+              }
+            } else (pointsAcc, bordersAcc)
         }
-      }
+
+      (allPoints.toList, allBorders.toSet)
     }
-    (allPoints.toList, allBorders.toSet)
-  }
 
 }

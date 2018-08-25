@@ -7,13 +7,23 @@ import org.deeplearning4j.scalphagozero.board.Point
 import scala.collection.mutable
 
 /**
+  * Can we find a better name ?
+  */
+trait GamePointType
+case object BlackStone extends GamePointType
+case object WhiteStone extends GamePointType
+case object BlackTerritory extends GamePointType
+case object WhiteTerritory extends GamePointType
+case object Dame extends GamePointType
+
+/**
   * Class to track territory on the Go board
   *
   * @param territoryMap map of Go points to status codes
   *
   * @author Max Pumperla
   */
-class Territory(territoryMap: mutable.HashMap[Point, String]) {
+class Territory(territoryMap: mutable.HashMap[Point, GamePointType]) {
 
   var numBlackTerritory = 0
   var numWhiteTerritory = 0
@@ -22,17 +32,15 @@ class Territory(territoryMap: mutable.HashMap[Point, String]) {
   var numDame = 0
   private val damePoints: util.ArrayList[Point] = new util.ArrayList[Point]()
 
-  for (point <- territoryMap.keys) {
-    val status = territoryMap(point)
+  for ((point, status) <- territoryMap) {
     status match {
-      case "black"       => numBlackStones += 1
-      case "white"       => numWhiteStones += 1
-      case "territory_b" => numBlackTerritory += 1
-      case "territory_w" => numWhiteTerritory += 1
-      case "dame" =>
+      case BlackStone     => numBlackStones += 1
+      case WhiteStone     => numWhiteStones += 1
+      case BlackTerritory => numBlackTerritory += 1
+      case WhiteTerritory => numWhiteTerritory += 1
+      case Dame =>
         numDame += 1
         damePoints.add(point)
-      case _ => throw new IllegalArgumentException("Unsupported status type:" + status)
     }
   }
 }
