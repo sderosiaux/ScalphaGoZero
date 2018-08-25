@@ -1,4 +1,7 @@
 package org.deeplearning4j.scalphagozero.board
+import org.deeplearning4j.scalphagozero.scoring.GameResult
+
+import scala.collection.mutable.ListBuffer
 
 /**
   * GameState encodes the state of a game of Go. Game states have board instances,
@@ -9,7 +12,6 @@ package org.deeplearning4j.scalphagozero.board
   * @param nextPlayer the Player who is next to play
   * @param previousState Previous GameState, if any
   * @param lastMove last move played in this game, if any
-  *
   * @author Max Pumperla
   */
 class GameState(
@@ -86,6 +88,32 @@ class GameState(
           this.board.getPlayer(point).isEmpty &&
           !this.isMoveSelfCapture(nextPlayer, move) &&
           !this.doesMoveViolateKo(nextPlayer, move)
+      }
+    }
+
+  def legalMoves: List[Move] =
+    if (this.isOver) List.empty
+    else {
+      val moves = ListBuffer[Move](Move.Pass, Move.Resign)
+      for {
+        row <- 1 to board.row
+        col <- 1 to board.col
+      } {
+        val move = Move.Play(Point(row, col))
+        if (this.isValidMove(move))
+          moves += move
+      }
+      moves.toList
+    }
+
+  def winner: Option[PlayerColor] =
+    if (this.isOver) None
+    else {
+      this.lastMove match {
+        case Some(Move.Resign) => Some(this.nextPlayer.color)
+        case None | Some(Move.Play(_)) | Some(Move.Pass) =>
+          val gameResult = GameResult.computeGameResult(this)
+          Some(gameResult.winner)
       }
     }
 

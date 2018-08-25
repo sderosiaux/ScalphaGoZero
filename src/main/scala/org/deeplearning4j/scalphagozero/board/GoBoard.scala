@@ -45,7 +45,6 @@ class GoBoard(val row: Int, val col: Int) {
           case None                                        => liberties += neighbor.toCoords
           case Some(goString) if goString.player == player => adjacentSameColor += goString
           case Some(goString)                              => adjacentOppositeColor += goString
-          case _                                           => ()
         }
       }
 
