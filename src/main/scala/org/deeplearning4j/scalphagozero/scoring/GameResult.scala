@@ -6,21 +6,44 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 /**
+  * Can we find a better name ?
+  */
+sealed trait GamePointType extends Product with Serializable
+case object BlackStone extends GamePointType
+case object WhiteStone extends GamePointType
+case object BlackTerritory extends GamePointType
+case object WhiteTerritory extends GamePointType
+case object Dame extends GamePointType
+
+/**
   * Compute the result of a game
-  *
-  * @param blackPoints points black scored
-  * @param whitePoints points white scored
-  * @param komi the komi that was agreed to at the beginning of the game
   *
   * @author Max Pumperla
   */
-final case class GameResult(blackPoints: Int, whitePoints: Int, komi: Double) {
+final case class GameResult(
+    numBlackStones: Int,
+    numWhiteStones: Int,
+    numBlackTerritory: Int,
+    numWhiteTerritory: Int,
+    numDame: Int,
+    komi: Double
+) {
+
+  /**
+    * Points black scored
+    */
+  val blackPoints: Int = numBlackTerritory + numBlackStones
+
+  /**
+    * points white scored
+    */
+  val whitePoints: Int = numWhiteStones + numWhiteStones
 
   val winner: Player = if (blackPoints > whitePoints + komi) BlackPlayer else WhitePlayer
 
   val winningMargin: Double = Math.abs(blackPoints - (whitePoints + komi))
 
-  override def toString: String = {
+  override lazy val toString: String = {
     val white = whitePoints + komi
     winner match {
       case BlackPlayer => "B+ " + (blackPoints - white)
@@ -34,15 +57,35 @@ object GameResult {
   /**
     * Compute the game result from the current state.
     *
-    * @param gameState GameState instance
+    * @param goBoard GoBoard instance
     * @return GameResult object
     */
   def computeGameResult(goBoard: GoBoard): GameResult = {
-    val territory = evaluateTerritory(goBoard)
-    new GameResult(
-      territory.numBlackTerritory + territory.numBlackStones,
-      territory.numWhiteStones + territory.numWhiteStones,
-      7.5
+    val territoryMap = evaluateTerritory(goBoard)
+
+    var numBlackStones = 0
+    var numWhiteStones = 0
+    var numBlackTerritory = 0
+    var numWhiteTerritory = 0
+    var numDame = 0
+
+    for ((_, status) <- territoryMap) {
+      status match {
+        case BlackStone     => numBlackStones += 1
+        case WhiteStone     => numWhiteStones += 1
+        case BlackTerritory => numBlackTerritory += 1
+        case WhiteTerritory => numWhiteTerritory += 1
+        case Dame           => numDame += 1
+      }
+    }
+
+    GameResult(
+      numBlackStones = numBlackStones,
+      numWhiteStones = numWhiteStones,
+      numBlackTerritory = numBlackTerritory,
+      numWhiteTerritory = numBlackTerritory,
+      numDame = numDame,
+      komi = 7.5
     )
   }
 
@@ -53,8 +96,8 @@ object GameResult {
     * @param goBoard GoBoard instance
     * @return Territory object
     */
-  def evaluateTerritory(goBoard: GoBoard): Territory = {
-    val statusMap = new mutable.HashMap[Point, GamePointType]()
+  def evaluateTerritory(goBoard: GoBoard): Map[Point, GamePointType] = {
+    val statusMap = mutable.Map.empty[Point, GamePointType]
     for (row <- 1 to goBoard.row; col <- 1 to goBoard.col) {
       val point = Point(row, col)
       if (!statusMap.contains(point)) {
@@ -76,7 +119,7 @@ object GameResult {
         }
       }
     }
-    new Territory(statusMap)
+    statusMap.toMap
   }
 
   private[this] final val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
