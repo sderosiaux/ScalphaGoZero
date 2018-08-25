@@ -108,8 +108,10 @@ object GameResult {
             val (group, neighbors) = collectRegion(point, goBoard)
             val fillWith =
               if (neighbors.size == 1) {
-                val neighborColor: Player = neighbors.head
-                if (neighborColor == BlackPlayer) BlackTerritory else WhiteTerritory
+                neighbors.head match {
+                  case BlackPlayer => BlackTerritory
+                  case WhitePlayer => WhiteTerritory
+                }
               } else {
                 Dame
               }
