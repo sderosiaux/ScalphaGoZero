@@ -91,6 +91,7 @@ class GameState(
       }
     }
 
+  // Could be a `val`
   def legalMoves: List[Move] =
     if (this.isOver) List.empty
     else {
@@ -106,6 +107,7 @@ class GameState(
       moves.toList
     }
 
+  // Could be a `val`
   def winner: Option[Player] =
     if (this.isOver) None
     else {
