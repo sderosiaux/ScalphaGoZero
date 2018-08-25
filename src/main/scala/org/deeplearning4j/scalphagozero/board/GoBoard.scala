@@ -85,20 +85,16 @@ class GoBoard(val row: Int, val col: Int) {
 
   def isSelfCapture(player: Player, point: Point): Boolean = {
     val friendlyStrings: ListBuffer[GoString] = ListBuffer.empty[GoString]
+
     for (neighbor <- neighborMap((point.row, point.col))) {
-      val neighborString = grid.get(neighbor.toCoords)
-      if (neighborString.isEmpty)
-        return false
-      else if (neighborString.get.player == player)
-        friendlyStrings += neighborString.get
-      else if (neighborString.get.numLiberties == 1)
-        return false
+      grid.get(neighbor.toCoords) match {
+        case None | Some(neighborString) if neighborString.numLiberties == 1 => return false
+        case Some(neighborString) if neighborString.player == player         => friendlyStrings += neighborString
+        case _                                                               => ()
+      }
     }
-    var allNeighborsInDanger = true
-    for (neighbor: GoString <- friendlyStrings)
-      if (neighbor.numLiberties != 1) allNeighborsInDanger = false
-    if (allNeighborsInDanger) return true
-    false
+
+    friendlyStrings.forall(_.numLiberties == 1)
   }
 
   def willCapture(player: Player, point: Point): Boolean = {
