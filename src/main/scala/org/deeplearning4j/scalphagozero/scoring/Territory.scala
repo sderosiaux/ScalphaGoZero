@@ -9,7 +9,7 @@ import scala.collection.mutable
 /**
   * Can we find a better name ?
   */
-trait GamePointType
+sealed trait GamePointType extends Product with Serializable
 case object BlackStone extends GamePointType
 case object WhiteStone extends GamePointType
 case object BlackTerritory extends GamePointType
