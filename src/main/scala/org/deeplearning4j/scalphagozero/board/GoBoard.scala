@@ -89,8 +89,8 @@ class GoBoard(val row: Int, val col: Int) {
     for (neighbor <- neighborMap((point.row, point.col))) {
       grid.get(neighbor.toCoords) match {
         case None                                                     => return false
-        case Some(neighborString) if neighborString.numLiberties == 1 => return false
         case Some(neighborString) if neighborString.player == player  => friendlyStrings += neighborString
+        case Some(neighborString) if neighborString.numLiberties == 1 => return false
         case _                                                        => ()
       }
     }
