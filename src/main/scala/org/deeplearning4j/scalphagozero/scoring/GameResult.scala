@@ -83,7 +83,7 @@ object GameResult {
       numBlackStones = numBlackStones,
       numWhiteStones = numWhiteStones,
       numBlackTerritory = numBlackTerritory,
-      numWhiteTerritory = numBlackTerritory,
+      numWhiteTerritory = numWhiteTerritory,
       numDame = numDame,
       komi = 7.5
     )
