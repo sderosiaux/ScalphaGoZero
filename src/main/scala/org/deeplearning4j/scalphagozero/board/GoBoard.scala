@@ -29,7 +29,7 @@ class GoBoard(val row: Int, val col: Int) {
 
   def corners(point: Point): List[Point] = cornerMap.getOrElse((point.row, point.col), List.empty)
 
-  def placeStone(player: Player[_], point: Point): Unit = {
+  def placeStone(player: Player, point: Point): Unit = {
     assert(isOnGrid(point))
 
     if (grid.get(point.toCoords).isDefined) {
@@ -42,21 +42,21 @@ class GoBoard(val row: Int, val col: Int) {
 
       for (neighbor: Point <- neighborMap((point.row, point.col))) {
         grid.get(neighbor.toCoords) match {
-          case None                                             => liberties += neighbor.toCoords
-          case Some(goString) if goString.color == player.color => adjacentSameColor += goString
-          case Some(goString)                                   => adjacentOppositeColor += goString
-          case _                                                => ()
+          case None                                        => liberties += neighbor.toCoords
+          case Some(goString) if goString.player == player => adjacentSameColor += goString
+          case Some(goString)                              => adjacentOppositeColor += goString
+          case _                                           => ()
         }
       }
 
       val newString =
-        (adjacentSameColor += GoString(player.color, Set(point.toCoords), liberties.toSet)).reduce(_ mergedWith _)
+        (adjacentSameColor += GoString(player, Set(point.toCoords), liberties.toSet)).reduce(_ mergedWith _)
 
       for (newStringPoint: (Int, Int) <- newString.stones)
         grid.put(newStringPoint, newString)
 
       hash ^= ZobristHashing.ZOBRIST((point.row, point.col, None)) // Remove empty-point hash code
-      hash ^= ZobristHashing.ZOBRIST((point.row, point.col, Some(player.color))) // Add filled point hash code.
+      hash ^= ZobristHashing.ZOBRIST((point.row, point.col, Some(player))) // Add filled point hash code.
 
       // 3. Reduce liberties of any adjacent strings of the opposite color.
       // 4. If any opposite color strings now have zero liberties, remove them.
@@ -76,7 +76,7 @@ class GoBoard(val row: Int, val col: Int) {
           this.replaceString(neighborString.get.withLiberty(Point(point._1, point._2)))
         grid.remove(point)
       }
-      hash ^= ZobristHashing.ZOBRIST((point._1, point._2, Some(goString.color))) //Remove filled point hash code.
+      hash ^= ZobristHashing.ZOBRIST((point._1, point._2, Some(goString.player))) //Remove filled point hash code.
       hash ^= ZobristHashing.ZOBRIST((point._1, point._2, None)) //Add empty point hash code.
     }
 
@@ -84,13 +84,13 @@ class GoBoard(val row: Int, val col: Int) {
     for (point <- newString.stones)
       grid += (point -> newString)
 
-  def isSelfCapture(player: Player[_], point: Point): Boolean = {
+  def isSelfCapture(player: Player, point: Point): Boolean = {
     val friendlyStrings: ListBuffer[GoString] = ListBuffer.empty[GoString]
     for (neighbor <- neighborMap((point.row, point.col))) {
       val neighborString = grid.get(neighbor.toCoords)
       if (neighborString.isEmpty)
         return false
-      else if (neighborString.get.color == player.color)
+      else if (neighborString.get.player == player)
         friendlyStrings += neighborString.get
       else if (neighborString.get.numLiberties == 1)
         return false
@@ -102,9 +102,9 @@ class GoBoard(val row: Int, val col: Int) {
     false
   }
 
-  def willCapture(player: Player[_], point: Point): Boolean = {
+  def willCapture(player: Player, point: Point): Boolean = {
     for (neighbor <- neighborMap((point.row, point.col))
-         if grid.get(neighbor.toCoords).isDefined && grid(neighbor.toCoords).color != player.color) {
+         if grid.get(neighbor.toCoords).isDefined && grid(neighbor.toCoords).player != player) {
       val neighborString = grid(neighbor.toCoords)
       if (neighborString.numLiberties == 1)
         return true
@@ -114,7 +114,7 @@ class GoBoard(val row: Int, val col: Int) {
 
   def isOnGrid(point: Point): Boolean = 1 <= point.row && point.row <= row && 1 <= point.col && point.col <= col
 
-  def getColor(point: Point): Option[PlayerColor] = grid.get(point.toCoords).map(_.color)
+  def getPlayer(point: Point): Option[Player] = grid.get(point.toCoords).map(_.player)
 
   def getGoString(point: Point): Option[GoString] = grid.get(point.toCoords)
 
