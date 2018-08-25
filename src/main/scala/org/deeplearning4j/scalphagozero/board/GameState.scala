@@ -106,11 +106,11 @@ class GameState(
       moves.toList
     }
 
-  def winner: Option[PlayerColor] =
+  def winner: Option[Player] =
     if (this.isOver) None
     else {
       this.lastMove match {
-        case Some(Move.Resign) => Some(this.nextPlayer.color)
+        case Some(Move.Resign) => Some(this.nextPlayer)
         case None | Some(Move.Play(_)) | Some(Move.Pass) =>
           val gameResult = GameResult.computeGameResult(this)
           Some(gameResult.winner)
