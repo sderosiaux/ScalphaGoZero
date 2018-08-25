@@ -130,16 +130,16 @@ object GameResult {
     val visitedPlayers = mutable.Set[Player]()
     val visitedPoints = ListBuffer[Point](startingPoint)
 
-    val toVisitPoints = mutable.Stack[Point](startingPoint)
-    while (toVisitPoints.nonEmpty) {
-      val toVisit = toVisitPoints.pop()
-      val toVisitColor = board.getPlayer(toVisit)
-      toVisitColor.foreach(visitedPlayers += _)
+    val nextPoints = mutable.Stack[Point](startingPoint)
+    while (nextPoints.nonEmpty) {
+      val point = nextPoints.pop()
+      val player = board.getPlayer(point)
+      player.foreach(visitedPlayers += _)
 
-      if (toVisitColor == initialPlayer) {
-        val nextVisits = toVisit.neighbors.filter(board.isOnGrid).diff(visitedPoints)
-        toVisitPoints.pushAll(nextVisits)
-        visitedPoints += toVisit
+      if (player == initialPlayer) {
+        val nextVisits = point.neighbors.filter(board.isOnGrid).diff(visitedPoints)
+        nextPoints.pushAll(nextVisits)
+        visitedPoints += point
       }
     }
 
