@@ -98,15 +98,13 @@ class GoBoard(val row: Int, val col: Int) {
     friendlyStrings.forall(_.numLiberties == 1)
   }
 
-  def willCapture(player: Player, point: Point): Boolean = {
-    for (neighbor <- neighborMap((point.row, point.col))
-         if grid.get(neighbor.toCoords).isDefined && grid(neighbor.toCoords).player != player) {
-      val neighborString = grid(neighbor.toCoords)
-      if (neighborString.numLiberties == 1)
-        return true
+  def willCapture(player: Player, point: Point): Boolean =
+    neighborMap((point.row, point.col)).exists { neighbor =>
+      grid.get(neighbor.toCoords) match {
+        case Some(neighborString) if neighborString.player != player && neighborString.numLiberties == 1 => true
+        case _                                                                                           => false
+      }
     }
-    false
-  }
 
   def isOnGrid(point: Point): Boolean = 1 <= point.row && point.row <= row && 1 <= point.col && point.col <= col
 
