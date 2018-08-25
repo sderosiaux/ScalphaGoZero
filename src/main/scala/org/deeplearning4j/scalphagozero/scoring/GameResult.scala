@@ -1,7 +1,6 @@
 package org.deeplearning4j.scalphagozero.scoring
 
-import org.deeplearning4j.scalphagozero.board.PlayerColor.{ Black, White }
-import org.deeplearning4j.scalphagozero.board.{ GoBoard, PlayerColor, Point }
+import org.deeplearning4j.scalphagozero.board.{ GoBoard, Point, _ }
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -17,15 +16,15 @@ import scala.collection.mutable.ListBuffer
   */
 final case class GameResult(blackPoints: Int, whitePoints: Int, komi: Double) {
 
-  val winner: PlayerColor = if (blackPoints > whitePoints + komi) PlayerColor.Black else PlayerColor.White
+  val winner: Player = if (blackPoints > whitePoints + komi) BlackPlayer else WhitePlayer
 
   val winningMargin: Double = Math.abs(blackPoints - (whitePoints + komi))
 
   override def toString: String = {
     val white = whitePoints + komi
     winner match {
-      case Black => "B+ " + (blackPoints - white)
-      case White => "W+ " + (white - blackPoints)
+      case BlackPlayer => "B+ " + (blackPoints - white)
+      case WhitePlayer => "W+ " + (white - blackPoints)
     }
   }
 }
@@ -59,19 +58,18 @@ object GameResult {
     for (row <- 1 to goBoard.row; col <- 1 to goBoard.col) {
       val point = Point(row, col)
       if (!statusMap.contains(point)) {
-        goBoard.getColor(point) match {
+        goBoard.getPlayer(point) match {
           case Some(color) =>
-            statusMap.put(point, if (color == PlayerColor.Black) BlackStone else WhiteStone)
+            statusMap.put(point, if (color == BlackPlayer) BlackStone else WhiteStone)
           case None =>
             val (group, neighbors) = collectRegion(point, goBoard)
             val fillWith =
               if (neighbors.size == 1) {
-                val neighborColor: Option[PlayerColor] = neighbors.head
-                if (neighborColor.get == PlayerColor.Black) BlackTerritory else WhiteTerritory
+                val neighborColor: Option[Player] = neighbors.head
+                if (neighborColor.get == BlackPlayer) BlackTerritory else WhiteTerritory
               } else {
                 Dame
               }
-
             for (position <- group) {
               statusMap.put(position, fillWith)
             }
@@ -90,17 +88,17 @@ object GameResult {
       startingPoint: Point,
       board: GoBoard,
       visited: Set[Point] = Set.empty
-  ): (List[Point], Set[Option[PlayerColor]]) =
+  ): (List[Point], Set[Option[Player]]) =
     if (visited.contains(startingPoint)) (List.empty, Set.empty)
     else {
-      val here: Option[PlayerColor] = board.getColor(startingPoint)
+      val here: Option[Player] = board.getPlayer(startingPoint)
 
       val (allPoints, allBorders) =
-        deltas.foldLeft((ListBuffer(startingPoint), mutable.Set.empty[Option[PlayerColor]])) {
+        deltas.foldLeft((ListBuffer(startingPoint), mutable.Set.empty[Option[Player]])) {
           case ((pointsAcc, bordersAcc), (row, col)) =>
             val nextPoint = Point(startingPoint.row + row, startingPoint.col + col)
             if (board.isOnGrid(nextPoint)) {
-              val neighbor: Option[PlayerColor] = board.getColor(nextPoint)
+              val neighbor: Option[Player] = board.getPlayer(nextPoint)
               if (neighbor == here) {
                 val (points, borders) = collectRegion(nextPoint, board, visited + startingPoint)
                 (pointsAcc ++ points, bordersAcc ++ borders)
