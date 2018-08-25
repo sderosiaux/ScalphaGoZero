@@ -112,7 +112,7 @@ class GameState(
       this.lastMove match {
         case Some(Move.Resign) => Some(this.nextPlayer.color)
         case None | Some(Move.Play(_)) | Some(Move.Pass) =>
-          val gameResult = GameResult.computeGameResult(this)
+          val gameResult = GameResult.computeGameResult(board)
           Some(gameResult.winner)
       }
     }

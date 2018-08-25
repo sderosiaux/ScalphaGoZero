@@ -66,8 +66,8 @@ object GameResult {
             val (group, neighbors) = collectRegion(point, goBoard)
             val fillWith =
               if (neighbors.size == 1) {
-                val neighborColor: Option[PlayerColor] = neighbors.head
-                if (neighborColor.get == PlayerColor.Black) BlackTerritory else WhiteTerritory
+                val neighborColor: PlayerColor = neighbors.head
+                if (neighborColor == PlayerColor.Black) BlackTerritory else WhiteTerritory
               } else {
                 Dame
               }
@@ -81,36 +81,26 @@ object GameResult {
     new Territory(statusMap)
   }
 
-  private[this] final val deltas = List((-1, 0), (1, 0), (0, -1), (0, 1))
+  private def collectRegion(startingPoint: Point, board: GoBoard): (List[Point], Set[PlayerColor]) = {
+    val initialColor = board.getColor(startingPoint)
 
-  // Is it possible to rewrite this in a tailrec function ?
-  // And/or use another mecanism to browse the board ?
-  // Why not use the `Point(...).neighbors` method ?
-  private def collectRegion(
-      startingPoint: Point,
-      board: GoBoard,
-      visited: Set[Point] = Set.empty
-  ): (List[Point], Set[Option[PlayerColor]]) =
-    if (visited.contains(startingPoint)) (List.empty, Set.empty)
-    else {
-      val here: Option[PlayerColor] = board.getColor(startingPoint)
+    val visitedColors = mutable.Set[PlayerColor]()
+    val visitedPoints = ListBuffer[Point](startingPoint)
 
-      val (allPoints, allBorders) =
-        deltas.foldLeft((ListBuffer(startingPoint), mutable.Set.empty[Option[PlayerColor]])) {
-          case ((pointsAcc, bordersAcc), (row, col)) =>
-            val nextPoint = Point(startingPoint.row + row, startingPoint.col + col)
-            if (board.isOnGrid(nextPoint)) {
-              val neighbor: Option[PlayerColor] = board.getColor(nextPoint)
-              if (neighbor == here) {
-                val (points, borders) = collectRegion(nextPoint, board, visited + startingPoint)
-                (pointsAcc ++ points, bordersAcc ++ borders)
-              } else {
-                (pointsAcc, bordersAcc + neighbor)
-              }
-            } else (pointsAcc, bordersAcc)
-        }
+    val toVisitPoints = mutable.Stack[Point](startingPoint)
+    while (toVisitPoints.nonEmpty) {
+      val toVisit = toVisitPoints.pop()
+      val toVisitColor = board.getColor(toVisit)
+      toVisitColor.foreach(visitedColors += _)
 
-      (allPoints.toList, allBorders.toSet)
+      if (toVisitColor == initialColor) {
+        val nextVisits = toVisit.neighbors.filter(board.isOnGrid).diff(visitedPoints)
+        toVisitPoints.pushAll(nextVisits)
+        visitedPoints += toVisit
+      }
     }
+
+    (visitedPoints.toList, visitedColors.toSet)
+  }
 
 }
