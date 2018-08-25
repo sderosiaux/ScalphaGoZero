@@ -99,8 +99,8 @@ class GoBoard(val row: Int, val col: Int) {
   }
 
   def willCapture(player: Player, point: Point): Boolean =
-    neighborMap((point.row, point.col)).exists { neighbor =>
-      grid.get(neighbor.toCoords) match {
+    neighborMap((point.row, point.col)).exists {
+      getGoString(_) match {
         case Some(neighborString) if neighborString.player != player && neighborString.numLiberties == 1 => true
         case _                                                                                           => false
       }
