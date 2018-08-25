@@ -10,19 +10,19 @@ class BoardTest extends FunSpec {
     it("should place and confirm a black stone") {
       board.placeStone(BlackPlayer, Point(2, 2))
       board.placeStone(WhitePlayer, Point(1, 2))
-      assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
+      assert(board.getPlayer(Point(2, 2)).contains(BlackPlayer))
     }
     it("if black's liberties go down to two, the stone should still be there") {
       board.placeStone(WhitePlayer, Point(2, 1))
-      assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
+      assert(board.getPlayer(Point(2, 2)).contains(BlackPlayer))
     }
     it("if black's liberties go down to one, the stone should still be there") {
       board.placeStone(WhitePlayer, Point(2, 3))
-      assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
+      assert(board.getPlayer(Point(2, 2)).contains(BlackPlayer))
     }
     it("finally, if all liberties are taken, the stone should be gone") {
       board.placeStone(WhitePlayer, Point(3, 2))
-      assert(board.getColor(Point(2, 2)).isEmpty)
+      assert(board.getPlayer(Point(2, 2)).isEmpty)
     }
   }
 
@@ -35,20 +35,20 @@ class BoardTest extends FunSpec {
       board.placeStone(WhitePlayer, Point(1, 2))
       board.placeStone(WhitePlayer, Point(1, 3))
 
-      assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
-      assert(board.getColor(Point(2, 3)).contains(PlayerColor.Black))
+      assert(board.getPlayer(Point(2, 2)).contains(BlackPlayer))
+      assert(board.getPlayer(Point(2, 3)).contains(BlackPlayer))
     }
     it("if black's liberties go down to two, the stone should still be there") {
       board.placeStone(WhitePlayer, Point(3, 2))
       board.placeStone(WhitePlayer, Point(3, 3))
-      assert(board.getColor(Point(2, 2)).contains(PlayerColor.Black))
-      assert(board.getColor(Point(2, 3)).contains(PlayerColor.Black))
+      assert(board.getPlayer(Point(2, 2)).contains(BlackPlayer))
+      assert(board.getPlayer(Point(2, 3)).contains(BlackPlayer))
 
     }
     it("finally, if all liberties are taken, the stone should be gone") {
       board.placeStone(WhitePlayer, Point(2, 1))
       board.placeStone(WhitePlayer, Point(2, 4))
-      assert(board.getColor(Point(2, 2)).isEmpty)
+      assert(board.getPlayer(Point(2, 2)).isEmpty)
     }
   }
 
@@ -60,9 +60,9 @@ class BoardTest extends FunSpec {
       board.placeStone(BlackPlayer, Point(1, 3))
       board.placeStone(WhitePlayer, Point(2, 1))
       board.placeStone(WhitePlayer, Point(1, 2))
-      assert(board.getColor(Point(1, 1)).isEmpty)
-      assert(board.getColor(Point(2, 1)).contains(PlayerColor.White))
-      assert(board.getColor(Point(1, 2)).contains(PlayerColor.White))
+      assert(board.getPlayer(Point(1, 1)).isEmpty)
+      assert(board.getPlayer(Point(2, 1)).contains(WhitePlayer))
+      assert(board.getPlayer(Point(1, 2)).contains(WhitePlayer))
     }
   }
 
